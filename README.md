@@ -68,7 +68,7 @@ curl --location --request GET 'http://0.0.0.0:8080/cars'
 ```
 
 Root endpoint
-With your browser go to http://0.0.0.0:8080 to see the staic html file
+With your browser go to http://0.0.0.0:8080 to see the static html file
 
 
 ### Contact
