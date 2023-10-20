@@ -9,6 +9,7 @@ use crate::ApplicationState;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub(crate) struct Car {
+    brand: String,
     color: String,
     fuel: String,
 }
@@ -33,18 +34,27 @@ pub(crate) fn is_ready(application_state: ApplicationState) -> (StatusCode, &'st
 }
 
 pub(crate) fn cars() -> Json<Vec<Car>> {
-
     let mut cars = Vec::new();
     let mut rng = thread_rng();
 
     for _n in 0..20 {
         cars.push(Car {
-            color: ["Blue".to_string(),"Black".to_string(),"White".to_string(),"Red".to_string()].choose(&mut rng).unwrap().to_string(),
-            fuel: ["Electric".to_string(),"Disel".to_string(),"Gasoline".to_string()].choose(&mut rng).unwrap().to_string(),
+            brand: ["Bmw".to_string(), "Volvo".to_string(), "Volkswagen".to_string()].choose(&mut rng).unwrap().to_string(),
+            color: ["Blue".to_string(), "Black".to_string(), "White".to_string(), "Red".to_string()].choose(&mut rng).unwrap().to_string(),
+            fuel: ["Electric".to_string(), "Disel".to_string(), "Gasoline".to_string()].choose(&mut rng).unwrap().to_string(),
         });
     }
 
     Json(cars)
+}
+
+pub(crate) fn my_car() -> Json<Car> {
+    let car = Car {
+        brand: "Volkswagen".to_string(),
+        color: "Black".to_string(),
+        fuel: "Electric".to_string(),
+    };
+    Json(car)
 }
 
 

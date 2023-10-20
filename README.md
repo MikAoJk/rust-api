@@ -67,6 +67,12 @@ Request to cars
 curl --location --request GET 'http://0.0.0.0:8080/cars'
 ```
 
+Request to my_car
+```bash script
+curl --location --request GET 'http://0.0.0.0:8080/my_car'
+```
+
+
 Root endpoint
 With your browser go to http://0.0.0.0:8080 to see the static html file
 
