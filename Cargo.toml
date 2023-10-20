@@ -1,0 +1,16 @@
+[package]
+name = "rust-api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = "1.0.189"
+serde_json = "1.0.107"
+serde_derive = "1.0.183"
+axum = "0.6.20"
+tokio = { version = "1.33.0", features = ["full"] }
+uuid = { version = "1.4.1", features = ["v4", "serde"] }
+log = "0.4.20"
+log4rs = { version = "1.2.0", features = ["json_encoder"] }
+time = "0.3.30"
+rand = "0.8.5"
