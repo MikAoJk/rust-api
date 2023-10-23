@@ -1,42 +1,30 @@
 mod api;
+mod router;
+mod application_state;
+mod log;
 
-use axum::{ Router};
-use axum::routing::get;
-use log::info;
-use serde_derive::{Deserialize, Serialize};
-use crate::api::{cars, is_alive, is_ready, my_car, root};
+use std::net::SocketAddr;
+use crate::application_state::ApplicationState;
+use crate::log::init_log4rs;
+use crate::router::create_router;
 
 
 #[tokio::main]
-async fn main()-> Result<(), Box<dyn std::error::Error>> {
+async fn main() {
+    init_log4rs();
 
     let application_state = ApplicationState {
         alive: true,
         ready: true,
     };
 
-    let router = Router::new()
-        .route("/", get(root()))
-        .route("/is_alive", get(is_alive(application_state)))
-        .route("/is_ready", get(is_ready(application_state)))
-        .route("/cars", get(cars()))
-        .route("/my_car", get(my_car()));
+    let app = create_router(application_state);
 
-    let listener =
-        tokio::net::TcpListener::bind(&"0.0.0.0:8080").await?;
+    let address = SocketAddr::from(([0, 0, 0, 0], 8080));
 
-    info!("listening on {}", listener.local_addr()?);
+    axum::Server::bind(&address)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 
-    axum::Server::from_tcp(listener.into_std()?)?
-        .serve(router.into_make_service())
-        .await?;
-
-    Ok(())
-
-}
-
-#[derive(Serialize, Deserialize, Clone, Copy)]
-pub struct ApplicationState {
-    alive: bool,
-    ready: bool,
 }

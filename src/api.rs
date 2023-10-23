@@ -1,7 +1,9 @@
 use std::fs;
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
-use axum::response::Html;
+use axum::response::{Html};
+use log::info;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde_derive::{Deserialize, Serialize};
@@ -14,7 +16,7 @@ pub(crate) struct Car {
     fuel: String,
 }
 
-pub(crate) fn is_alive(application_state: ApplicationState) -> (StatusCode, &'static str) {
+pub(crate) async fn is_alive(State(application_state): State<ApplicationState>) -> (StatusCode, &'static str) {
     match application_state.alive {
         true => {
             (StatusCode::OK, "I'm alive! :)")
@@ -24,7 +26,7 @@ pub(crate) fn is_alive(application_state: ApplicationState) -> (StatusCode, &'st
 }
 
 
-pub(crate) fn is_ready(application_state: ApplicationState) -> (StatusCode, &'static str) {
+pub(crate) async fn is_ready(State(application_state): State<ApplicationState>) -> (StatusCode, &'static str) {
     match application_state.ready {
         true => {
             (StatusCode::OK, "I'm ready! :)")
@@ -33,7 +35,8 @@ pub(crate) fn is_ready(application_state: ApplicationState) -> (StatusCode, &'st
     }
 }
 
-pub(crate) fn cars() -> Json<Vec<Car>> {
+pub(crate) async fn cars() -> Json<Vec<Car>> {
+    info!("cars endpoint i called");
     let mut cars = Vec::new();
     let mut rng = thread_rng();
 
@@ -48,7 +51,9 @@ pub(crate) fn cars() -> Json<Vec<Car>> {
     Json(cars)
 }
 
-pub(crate) fn my_car() -> Json<Car> {
+pub(crate) async fn my_car() -> Json<Car> {
+    info!("my_car endpoint i called");
+
     let car = Car {
         brand: "Volkswagen".to_string(),
         color: "Black".to_string(),
@@ -57,8 +62,7 @@ pub(crate) fn my_car() -> Json<Car> {
     Json(car)
 }
 
-
-pub(crate) fn root() -> Html<&'static str> {
+pub(crate) async  fn root() -> Html<&'static str> {
     let html_in_string: String = fs::read_to_string("static/index.html").expect("failed to pare html file to string");
     let html_in_str: &str = string_to_static_str(html_in_string);
 
