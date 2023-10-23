@@ -12,4 +12,3 @@ pub fn create_router(application_state: ApplicationState) -> Router {
         .route("/my_car", get(my_car))
         .with_state(application_state)
 }
-

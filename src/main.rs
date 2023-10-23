@@ -4,6 +4,7 @@ mod application_state;
 mod log;
 
 use std::net::SocketAddr;
+use ::log::info;
 use crate::application_state::ApplicationState;
 use crate::log::init_log4rs;
 use crate::router::create_router;
@@ -27,4 +28,5 @@ async fn main() {
         .await
         .unwrap();
 
+    info!("Server has started");
 }

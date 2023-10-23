@@ -1,4 +1,5 @@
 use std::fs;
+use std::time::SystemTime;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
@@ -36,7 +37,8 @@ pub(crate) async fn is_ready(State(application_state): State<ApplicationState>) 
 }
 
 pub(crate) async fn cars() -> Json<Vec<Car>> {
-    info!("cars endpoint i called");
+    let sys_time_start = SystemTime::now();
+
     let mut cars = Vec::new();
     let mut rng = thread_rng();
 
@@ -47,6 +49,10 @@ pub(crate) async fn cars() -> Json<Vec<Car>> {
             fuel: ["Electric".to_string(), "Disel".to_string(), "Gasoline".to_string()].choose(&mut rng).unwrap().to_string(),
         });
     }
+    let sys_time_end = SystemTime::now();
+    let difference = sys_time_end.duration_since(sys_time_start);
+
+    info!("cars endpoint call took time: {:?}", difference.unwrap());
 
     Json(cars)
 }
