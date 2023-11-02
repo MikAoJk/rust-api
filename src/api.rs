@@ -78,3 +78,71 @@ pub(crate) async  fn root() -> Html<&'static str> {
 fn string_to_static_str(s: String) -> &'static str {
     s.leak()
 }
+
+#[cfg(test)]
+mod tests {
+    use axum::http::StatusCode;
+    use axum_test_helper::TestClient;
+
+    use crate::ApplicationState;
+    use crate::router::create_router;
+
+
+    #[tokio::test]
+    async fn configured_liveness_returns_200_when_state_alive() {
+        let routes = create_router(
+            ApplicationState {
+                alive: true,
+                ready: false,
+            }
+        );
+        let client = TestClient::new(routes);
+
+        let res = client.get(&"/is_alive".to_string()).send().await;
+        assert_eq!(res.status(), StatusCode::OK);
+
+    }
+
+    #[tokio::test]
+    async fn configured_liveness_returns_500_when_state_not_alive() {
+        let routes = create_router(
+            ApplicationState {
+                alive: false,
+                ready: false,
+            }
+        );
+        let client = TestClient::new(routes);
+
+        let res = client.get(&"/is_alive".to_string()).send().await;
+        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    }
+
+    #[tokio::test]
+    async fn configured_readiness_returns_200_when_state_alive() {
+        let routes = create_router(
+            ApplicationState {
+                alive: false,
+                ready: true,
+            }
+        );
+        let client = TestClient::new(routes);
+
+        let res = client.get(&"/is_ready".to_string()).send().await;
+        assert_eq!(res.status(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn configured_readiness_returns_500_when_state_not_alive() {
+        let routes = create_router(
+            ApplicationState {
+                alive: false,
+                ready: false,
+            }
+        );
+        let client = TestClient::new(routes);
+
+        let res = client.get(&"/is_ready".to_string()).send().await;
+        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+    }
+}

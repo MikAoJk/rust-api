@@ -14,3 +14,7 @@ log = "0.4.20"
 log4rs = { version = "1.2.0", features = ["json_encoder"] }
 time = "0.3.30"
 rand = "0.8.5"
+
+[dev-dependencies]
+axum-test-helper = "0.3.0"
+serde_yaml = "0.9.27"
