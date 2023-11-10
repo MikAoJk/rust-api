@@ -82,7 +82,8 @@ fn string_to_static_str(s: String) -> &'static str {
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
-    use axum_test_helper::TestClient;
+    use axum_test_helper::{TestClient, TestResponse};
+    use crate::api::Car;
 
     use crate::ApplicationState;
     use crate::router::create_router;
@@ -143,6 +144,25 @@ mod tests {
 
         let res = client.get(&"/is_ready".to_string()).send().await;
         assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+    }
+
+    #[tokio::test]
+    async fn configured_my_car_returns_200_and_colour_black_in_json_object() {
+        let routes = create_router(
+            ApplicationState {
+                alive: true,
+                ready: false,
+            }
+        );
+        let client = TestClient::new(routes);
+
+        let response: TestResponse = client.get(&"/my_car".to_string()).send().await;
+        let response_status_code: StatusCode = response.status();
+        let my_car: Car = serde_json::from_str(response.text().await.as_str()).unwrap();
+
+        assert_eq!(response_status_code.clone(), StatusCode::OK);
+        assert_eq!(my_car.clone().color, "Black".to_string());
 
     }
 }
