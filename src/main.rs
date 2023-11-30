@@ -3,7 +3,6 @@ mod router;
 mod application_state;
 mod log;
 
-use std::net::SocketAddr;
 use ::log::info;
 use crate::application_state::ApplicationState;
 use crate::log::init_log4rs;
@@ -21,12 +20,10 @@ async fn main() {
 
     let app = create_router(application_state);
 
-    let address = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let listener =
+        tokio::net::TcpListener::bind(&"0.0.0.0:8080").await.unwrap();
 
-    axum::Server::bind(&address)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    axum::serve(listener, app).await.unwrap();
 
     info!("Server has started");
 }

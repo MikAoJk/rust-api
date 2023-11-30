@@ -82,7 +82,7 @@ fn string_to_static_str(s: String) -> &'static str {
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
-    use axum_test_helper::{TestClient, TestResponse};
+    use axum_test::{TestResponse, TestServer};
     use crate::api::Car;
 
     use crate::ApplicationState;
@@ -91,59 +91,59 @@ mod tests {
 
     #[tokio::test]
     async fn configured_liveness_returns_200_when_state_alive() {
-        let routes = create_router(
+        let app = create_router(
             ApplicationState {
                 alive: true,
                 ready: false,
             }
         );
-        let client = TestClient::new(routes);
+        let server = TestServer::new(app).unwrap();
 
-        let res = client.get(&"/is_alive".to_string()).send().await;
-        assert_eq!(res.status(), StatusCode::OK);
+        let res = server.get(&"/is_alive".to_string()).await;
+        assert_eq!(res.status_code(), StatusCode::OK);
 
     }
 
     #[tokio::test]
     async fn configured_liveness_returns_500_when_state_not_alive() {
-        let routes = create_router(
+        let app = create_router(
             ApplicationState {
                 alive: false,
                 ready: false,
             }
         );
-        let client = TestClient::new(routes);
+        let server = TestServer::new(app).unwrap();
 
-        let res = client.get(&"/is_alive".to_string()).send().await;
-        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        let response = server.get(&"/is_alive".to_string()).await;
+        assert_eq!(response.status_code(), StatusCode::INTERNAL_SERVER_ERROR);
     }
 
     #[tokio::test]
     async fn configured_readiness_returns_200_when_state_alive() {
-        let routes = create_router(
+        let app = create_router(
             ApplicationState {
                 alive: false,
                 ready: true,
             }
         );
-        let client = TestClient::new(routes);
+        let server = TestServer::new(app).unwrap();
 
-        let res = client.get(&"/is_ready".to_string()).send().await;
-        assert_eq!(res.status(), StatusCode::OK);
+        let response = server.get(&"/is_ready".to_string()).await;
+        assert_eq!(response.status_code(), StatusCode::OK);
     }
 
     #[tokio::test]
     async fn configured_readiness_returns_500_when_state_not_alive() {
-        let routes = create_router(
+        let app = create_router(
             ApplicationState {
                 alive: false,
                 ready: false,
             }
         );
-        let client = TestClient::new(routes);
+        let server = TestServer::new(app).unwrap();
 
-        let res = client.get(&"/is_ready".to_string()).send().await;
-        assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        let response = server.get(&"/is_ready".to_string()).await;
+        assert_eq!(response.status_code(), StatusCode::INTERNAL_SERVER_ERROR);
 
     }
 
@@ -155,11 +155,11 @@ mod tests {
                 ready: false,
             }
         );
-        let client = TestClient::new(routes);
+        let server = TestServer::new(routes).unwrap();
 
-        let response: TestResponse = client.get(&"/my_car".to_string()).send().await;
-        let response_status_code: StatusCode = response.status();
-        let my_car: Car = serde_json::from_str(response.text().await.as_str()).unwrap();
+        let response: TestResponse = server.get(&"/my_car".to_string()).await;
+        let response_status_code: StatusCode = response.status_code();
+        let my_car: Car = serde_json::from_str(response.text().as_str()).unwrap();
 
         assert_eq!(response_status_code.clone(), StatusCode::OK);
         assert_eq!(my_car.clone().color, "Black".to_string());
