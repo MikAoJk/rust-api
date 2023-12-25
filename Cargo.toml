@@ -8,7 +8,7 @@ serde = "1.0.193"
 serde_json = "1.0.108"
 serde_derive = "1.0.193"
 axum = "0.7.2"
-tokio = { version = "1.35.0", features = ["full"] }
+tokio = { version = "1.35.1", features = ["full"] }
 uuid = { version = "1.6.1", features = ["v4", "serde"] }
 log = "0.4.20"
 log4rs = { version = "1.2.0", features = ["json_encoder"] }
