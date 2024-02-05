@@ -12,7 +12,7 @@ tokio = { version = "1.35.1", features = ["full"] }
 uuid = { version = "1.7.0", features = ["v4", "serde"] }
 log = "0.4.20"
 log4rs = { version = "1.2.0", features = ["json_encoder"] }
-time = "0.3.31"
+time = "0.3.34"
 rand = "0.8.5"
 
 [dev-dependencies]
