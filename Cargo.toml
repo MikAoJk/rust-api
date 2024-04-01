@@ -16,5 +16,5 @@ time = "0.3.34"
 rand = "0.8.5"
 
 [dev-dependencies]
-axum-test = "14.4.0"
+axum-test = "14.7.0"
 serde_yaml = "0.9.34"
