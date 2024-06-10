@@ -17,4 +17,3 @@ rand = "0.8.5"
 
 [dev-dependencies]
 axum-test = "15.0.1"
-serde_yml = "0.0.10"
