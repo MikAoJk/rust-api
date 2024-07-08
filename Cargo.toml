@@ -16,4 +16,4 @@ time = "0.3.36"
 rand = "0.8.5"
 
 [dev-dependencies]
-axum-test = "15.2.0"
+axum-test = "15.3.0"
