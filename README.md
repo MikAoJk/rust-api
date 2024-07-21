@@ -19,6 +19,12 @@ Make sure you have cargo installed using this command:
 cargo --version
 ```
 
+#### Curl
+Make sure you have curl installed using this command:
+```bash script
+curl --version
+```
+
 ### Build
 Build the code without running it
 ```bash script
