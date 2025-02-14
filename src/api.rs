@@ -6,7 +6,7 @@ use axum::Json;
 use axum::response::{Html};
 use log::info;
 use rand::prelude::IndexedRandom;
-use rand::{rng};
+use rand::{rng, Rng};
 use serde_derive::{Deserialize, Serialize};
 use crate::ApplicationState;
 
@@ -15,6 +15,7 @@ pub(crate) struct Car {
     brand: String,
     color: String,
     fuel: String,
+    hp: u32,
 }
 
 pub(crate) async fn is_alive(State(application_state): State<ApplicationState>) -> (StatusCode, &'static str) {
@@ -47,6 +48,7 @@ pub(crate) async fn cars() -> Json<Vec<Car>> {
             brand: ["Bmw".to_string(), "Volvo".to_string(), "Volkswagen".to_string()].choose(&mut rng).unwrap().to_string(),
             color: ["Blue".to_string(), "Black".to_string(), "White".to_string(), "Red".to_string()].choose(&mut rng).unwrap().to_string(),
             fuel: ["Electric".to_string(), "Disel".to_string(), "Gasoline".to_string()].choose(&mut rng).unwrap().to_string(),
+            hp: rng.random_range(80..400)
         });
     }
     let sys_time_end = SystemTime::now();
@@ -66,6 +68,7 @@ pub(crate) async fn my_car() -> Json<Car> {
         brand: "Volkswagen".to_string(),
         color: "Black".to_string(),
         fuel: "Electric".to_string(),
+        hp: 174
     };
 
     let sys_time_end = SystemTime::now();
