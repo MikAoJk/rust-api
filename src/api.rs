@@ -5,8 +5,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use axum::response::{Html};
 use log::info;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::prelude::IndexedRandom;
+use rand::{rng};
 use serde_derive::{Deserialize, Serialize};
 use crate::ApplicationState;
 
@@ -40,7 +40,7 @@ pub(crate) async fn cars() -> Json<Vec<Car>> {
     let sys_time_start = SystemTime::now();
 
     let mut cars = Vec::new();
-    let mut rng = thread_rng();
+    let mut rng = rng();
 
     for _n in 0..20 {
         cars.push(Car {
@@ -59,12 +59,20 @@ pub(crate) async fn cars() -> Json<Vec<Car>> {
 
 pub(crate) async fn my_car() -> Json<Car> {
     info!("my_car endpoint i called");
+    let sys_time_start = SystemTime::now();
+
 
     let car = Car {
         brand: "Volkswagen".to_string(),
         color: "Black".to_string(),
         fuel: "Electric".to_string(),
     };
+
+    let sys_time_end = SystemTime::now();
+    let difference = sys_time_end.duration_since(sys_time_start);
+
+    info!("cars endpoint call took time: {:?}", difference.unwrap());
+
     Json(car)
 }
 
